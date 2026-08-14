@@ -4,35 +4,125 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>بوابة الإستعلام عن المذكرات | وزارة الدفاع</title>
+    
+    <!-- إعدادات تطبيق الـ PWA والصور القياسية -->
     <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#1a365d">
     <link rel="apple-touch-icon" href="/icon-192x192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- استدعاء خط Cairo -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --primary-color: #1a365d; --gold-accent: #c5a059; --bg-color: #f0f4f8; }
-        body { font-family: 'Cairo', sans-serif; background-color: var(--bg-color); margin: 0; padding: 20px; text-align: center; }
-        .container { max-width: 600px; margin: 50px auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        input { width: 100%; padding: 15px; margin-bottom: 10px; border: 2px solid #ccc; border-radius: 8px; }
-        button { padding: 15px 30px; background-color: #1a365d; color: white; border: none; border-radius: 8px; cursor: pointer; }
-        #installBtn { display: none; margin-top: 20px; background-color: #c5a059; }
+        :root { --primary-color: #1a365d; --gold-accent: #c5a059; --bg-color: #f0f4f8; --text-main: #2d3748; }
+        body { font-family: 'Cairo', sans-serif; background-color: var(--bg-color); margin: 0; padding: 0; color: var(--text-main); display: flex; flex-direction: column; min-height: 100vh; }
+        header { background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364); color: white; text-align: center; padding: 30px 15px; border-bottom: 5px solid var(--gold-accent); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+        header h2 { margin: 0 0 5px 0; font-size: 1.3rem; font-weight: 600; color: #e2e8f0; letter-spacing: 1px; }
+        header h1 { margin: 0; font-size: 2.2rem; font-weight: 700; color: var(--gold-accent); text-shadow: 1px 1px 4px rgba(0,0,0,0.5); }
+        .main-content { flex: 1; padding: 20px; display: flex; justify-content: center; align-items: flex-start; margin-top: 40px; }
+        .container { width: 100%; max-width: 700px; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.06); border-top: 4px solid var(--primary-color); text-align: center; }
+        
+        .search-box { display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px; }
+        input[type="text"] { width: 100%; padding: 16px; font-size: 1.1rem; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; font-family: 'Cairo', sans-serif; }
+        input[type="text"]:focus { border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(26, 54, 93, 0.1); }
+        button { padding: 16px; background-color: var(--primary-color); color: white; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 700; cursor: pointer; font-family: 'Cairo', sans-serif; transition: background-color 0.3s; }
+        button:hover { background-color: #122642; }
+
+        /* تنسيق زر تثبيت التطبيق */
+        #installBtn { display: none; margin: 0 auto 20px auto; padding: 12px 25px; background-color: var(--gold-accent); color: #fff; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        #installBtn:hover { background-color: #b38b47; }
+
+        .loader { display: none; text-align: center; margin: 20px 0; font-size: 1.1rem; font-weight: bold; color: var(--primary-color); }
+        .result-card { text-align: right; border-right: 5px solid var(--gold-accent); background: #f8fafc; padding: 20px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #e2e8f0; }
+        .result-card h3 { margin-top: 0; color: var(--primary-color); font-size: 1.4rem; margin-bottom: 15px;}
+        .result-card p { margin: 8px 0; font-size: 1.1rem; line-height: 1.6; }
+        .memo-link { display: inline-block; margin-top: 15px; padding: 10px 25px; background: var(--primary-color); color: white; text-decoration: none; border-radius: 6px; font-weight: 600; }
+        
+        .support-btn { position: fixed; bottom: 30px; right: 30px; background-color: #25D366; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3); text-decoration: none; z-index: 1000; transition: transform 0.3s; }
+        .support-btn:hover { transform: scale(1.1); }
+        .support-btn svg { width: 35px; height: 35px; fill: currentColor; }
+        
+        footer { background-color: #1a202c; color: #a0aec0; text-align: center; padding: 15px 10px; font-size: 1rem; border-top: 3px solid var(--gold-accent); }
+        footer span { color: var(--gold-accent); font-weight: bold; }
+
+        @media (min-width: 601px) { .search-box { flex-direction: row; } input[type="text"] { flex: 1; } button { width: 160px; } }
+        @media (max-width: 600px) { .support-btn { bottom: 20px; right: 20px; width: 50px; height: 50px; } .support-btn svg { width: 28px; height: 28px; } }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>بوابة الاستعلام</h1>
-        <input type="text" id="searchInput" placeholder="رقم المذكرة...">
-        <button onclick="searchMemo()">بحث</button>
-        <button id="installBtn">تثبيت التطبيق 📱</button>
-        <div id="results"></div>
+    <header>
+        <h2>الجمهورية اليمنية-وزارة الدفاع</h2>
+        <h1>بوابة الإستعلام عن المذكرات</h1>
+    </header>
+
+    <div class="main-content">
+        <div class="container">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="أدخل رقم المذكرة للاستعلام..." onkeypress="handleKeyPress(event)">
+                <button onclick="searchMemo()">بحث</button>
+            </div>
+            
+            <!-- زر تثبيت التطبيق -->
+            <button id="installBtn">تثبيت التطبيق على الجهاز 📱</button>
+
+            <div id="loader" class="loader">جاري الاستعلام، يرجى الانتظار...</div>
+            <div id="results"></div>
+        </div>
     </div>
 
-    <script>
-        // تسجيل الـ Service Worker
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js');
-        }
+    <footer>
+        برمجة المهندس / <span>وسيم همدان الأهنومي(771954200)</span>
+    </footer>
 
+    <!-- زر خدمة العملاء واتساب -->
+    <a href="https://wa.me/967771811337?text=مرحباً،%20لدي%20استفسار%20بخصوص%20بوابة%20المذكرات" target="_blank" class="support-btn" title="خدمة العملاء">
+        <svg viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824zm-3.423-14.416c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm.029 18.88c-1.161 0-2.305-.292-3.318-.844l-3.677.964 1.003-3.588c-.608-1.065-.928-2.294-.928-3.568 0-4.145 3.373-7.518 7.518-7.518 4.147 0 7.52 3.373 7.52 7.518 0 4.146-3.373 7.518-7.518 7.518z"/></svg>
+    </a>
+
+    <script>
+        async function searchMemo() {
+            const query = document.getElementById('searchInput').value.trim();
+            const resultsDiv = document.getElementById('results');
+            const loader = document.getElementById('loader');
+            if (!query) return alert("يرجى إدخال رقم المذكرة أولاً");
+            resultsDiv.innerHTML = "";
+            loader.style.display = "block";
+            try {
+                const response = await fetch(`/api/search?query=${query}`);
+                if (!response.ok) throw new Error("Server error");
+                const data = await response.json();
+                loader.style.display = "none";
+                if (!data.results || data.results.length === 0) {
+                    resultsDiv.innerHTML = "<p style='color:#e53e3e; font-weight:bold;'>لم يتم العثور على مذكرات مطابقة.</p>";
+                    return;
+                }
+                data.results.forEach(item => {
+                    let statusHtml = (item.status && item.status.startsWith('http')) 
+                        ? `<a href="${item.status}" target="_blank" class="memo-link">عرض حالة المذكرة / المرفقات</a>`
+                        : `<p><strong>حالة المذكرة:</strong> <span style="color:#2b6cb0; font-weight:bold;">${item.status || '---'}</span></p>`;
+                    resultsDiv.innerHTML += `<div class="result-card"><h3>رقم المذكرة: ${item.memo_number}</h3>${statusHtml}<p><strong>تاريخ التحديث:</strong> ${item.date || '---'}</p><p><strong>ملاحظات:</strong> ${item.notes || '---'}</p></div>`;
+                });
+            } catch (error) {
+                loader.style.display = "none";
+                resultsDiv.innerHTML = "<p style='color:#e53e3e; font-weight:bold;'>حدث خطأ في الاتصال بقاعدة البيانات.</p>";
+            }
+        }
+        function handleKeyPress(event) { if (event.key === 'Enter') searchMemo(); }
+
+        // كود تشغيل وتثبيت التطبيق (تم تحديثه ليعمل مع ملف sw.js الحقيقي)
         let deferredPrompt;
         const installBtn = document.getElementById('installBtn');
+        
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').then(reg => {
+                    console.log('ServiceWorker registration successful');
+                }).catch(err => {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        }
 
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
@@ -43,9 +133,14 @@
         installBtn.addEventListener('click', async () => {
             if (deferredPrompt) {
                 deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
                 deferredPrompt = null;
                 installBtn.style.display = 'none';
             }
+        });
+
+        window.addEventListener('appinstalled', () => {
+            installBtn.style.display = 'none';
         });
     </script>
 </body>
