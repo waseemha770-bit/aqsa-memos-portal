@@ -1,7 +1,6 @@
 {
   "name": "بوابة المذكرات - وزارة الدفاع",
   "short_name": "بوابة المذكرات",
-  "description": "نظام الاستعلام عن المذكرات لوزارة الدفاع اليمنية",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#f0f4f8",
