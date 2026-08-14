@@ -6,8 +6,6 @@ import codecs
 
 app = FastAPI()
 
-# رابط ملف جوجل شيتس بصيغة CSV (تأكد أن الملف عام للقراءة)
-# تم إضافة gid=0 للإشارة إلى الورقة الأولى (المذكرات)
 SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1LWymAvzOBfwblAiWIWOsKpj0KTMx8MjaIBZTet12u5g/export?format=csv&gid=0"
 
 @app.get("/api/search")
@@ -16,18 +14,22 @@ def search_memo(query: str = ""):
         return JSONResponse(content={"results": []})
     
     try:
-        # جلب البيانات مباشرة من قوقل شيتس
-        response = urllib.request.urlopen(SHEET_CSV_URL)
+        # إضافة User-Agent حتى لا تقوم سيرفرات جوجل بحظر الطلب
+        req = urllib.request.Request(SHEET_CSV_URL, headers={'User-Agent': 'Mozilla/5.0'})
+        response = urllib.request.urlopen(req)
+        
+        # قراءة البيانات كملف CSV
         reader = csv.DictReader(codecs.iterdecode(response, 'utf-8'))
         
         results = []
         for row in reader:
-            # المفاتيح هنا يجب أن تطابق عناوين الأعمدة في ملف الشيتس تماماً
+            # مطابقة العناوين حرفياً كما هي في الصف الأول من الإكسل
             memo_num = str(row.get('رقم المذكرة', '')).strip()
+            
             if query in memo_num:
                 results.append({
                     "memo_number": memo_num,
-                    "link": row.get('رابط', ''),
+                    "status": row.get('حالة المذكرة', ''),
                     "date": row.get('تاريخ التحديث', ''),
                     "notes": row.get('ملاحظات', '')
                 })
@@ -35,4 +37,5 @@ def search_memo(query: str = ""):
         return JSONResponse(content={"results": results})
         
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        print("Error:", str(e))
+        raise HTTPException(status_code=500, detail="خطأ في قراءة قاعدة البيانات")
