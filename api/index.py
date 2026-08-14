@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
 import csv
-import urllib.request
+import requests
 import codecs
 
 app = FastAPI()
@@ -14,16 +14,24 @@ def search_memo(query: str = ""):
         return JSONResponse(content={"results": []})
     
     try:
-        # إضافة User-Agent حتى لا تقوم سيرفرات جوجل بحظر الطلب
-        req = urllib.request.Request(SHEET_CSV_URL, headers={'User-Agent': 'Mozilla/5.0'})
-        response = urllib.request.urlopen(req)
+        # استخدام مكتبة requests مع رأس (Header) يحاكي المتصفح الحقيقي
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        }
         
-        # قراءة البيانات كملف CSV
-        reader = csv.DictReader(codecs.iterdecode(response, 'utf-8'))
+        response = requests.get(SHEET_CSV_URL, headers=headers)
+        
+        # التأكد من نجاح الاستجابة
+        response.raise_for_status()
+        
+        # قراءة البيانات
+        # نستخدم iter_lines لقراءة المحتوى سطراً بسطر وتحويله عبر csv.DictReader
+        lines = (line.decode('utf-8') for line in response.iter_lines())
+        reader = csv.DictReader(lines)
         
         results = []
         for row in reader:
-            # مطابقة العناوين حرفياً كما هي في الصف الأول من الإكسل
+            # تنظيف المسافات إن وجدت حول اسم العمود
             memo_num = str(row.get('رقم المذكرة', '')).strip()
             
             if query in memo_num:
@@ -36,6 +44,9 @@ def search_memo(query: str = ""):
                 
         return JSONResponse(content={"results": results})
         
+    except requests.exceptions.RequestException as e:
+        print("Network or Fetch Error:", str(e))
+        raise HTTPException(status_code=500, detail="خطأ في الشبكة أو في جلب البيانات من Google Sheets")
     except Exception as e:
-        print("Error:", str(e))
-        raise HTTPException(status_code=500, detail="خطأ في قراءة قاعدة البيانات")
+        print("General Error:", str(e))
+        raise HTTPException(status_code=500, detail="خطأ داخلي في الخادم")
