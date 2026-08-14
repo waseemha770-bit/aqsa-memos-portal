@@ -1,1 +1,121 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-width=1.0">
+    <title>بوابة الإستعلام عن المذكرات | مدينة الأقصى الطبية</title>
+    <style>
+        :root {
+            --primary-color: #0056b3;
+            --bg-color: #f8f9fa;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0; padding: 0; color: #333;
+        }
+        header {
+            background-color: var(--primary-color);
+            color: white; padding: 20px 0; text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        header h1 { margin: 0; font-size: 1.8rem; }
+        .container {
+            max-width: 700px; margin: 40px auto;
+            background: white; padding: 30px;
+            border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        .search-box {
+            display: flex; gap: 10px; margin-bottom: 20px;
+        }
+        input[type="text"] {
+            flex: 1; padding: 12px; font-size: 1rem;
+            border: 1px solid #ced4da; border-radius: 5px; outline: none;
+        }
+        input[type="text"]:focus { border-color: var(--primary-color); }
+        button {
+            padding: 12px 25px; background-color: var(--primary-color);
+            color: white; border: none; border-radius: 5px;
+            font-size: 1rem; cursor: pointer; transition: 0.3s;
+        }
+        button:hover { background-color: #004494; }
+        .loader { display: none; text-align: center; margin: 20px 0; font-weight: bold; color: var(--primary-color); }
+        .result-card {
+            border-right: 4px solid var(--primary-color);
+            background: #f8f9fa; padding: 15px; margin-bottom: 15px;
+            border-radius: 4px; border-top: 1px solid #eee; border-bottom: 1px solid #eee; border-left: 1px solid #eee;
+        }
+        .result-card h3 { margin-top: 0; color: var(--primary-color); }
+        .memo-link {
+            display: inline-block; margin-top: 10px; padding: 8px 15px;
+            background: #28a745; color: white; text-decoration: none; border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
 
+    <header>
+        <h1>مدينة الأقصى الطبية</h1>
+        <p>البوابة الإلكترونية للإستعلام عن المذكرات المالية والإدارية</p>
+    </header>
+
+    <div class="container">
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="أدخل رقم المذكرة للبحث..." onkeypress="handleKeyPress(event)">
+            <button onclick="searchMemo()">بحث عن مذكرة</button>
+        </div>
+
+        <div id="loader" class="loader">جاري الاستعلام، يرجى الانتظار...</div>
+        <div id="results"></div>
+    </div>
+
+    <script>
+        async function searchMemo() {
+            const query = document.getElementById('searchInput').value.trim();
+            const resultsDiv = document.getElementById('results');
+            const loader = document.getElementById('loader');
+
+            if (!query) {
+                alert("يرجى إدخال رقم المذكرة أولاً");
+                return;
+            }
+
+            resultsDiv.innerHTML = "";
+            loader.style.display = "block";
+
+            try {
+                // استدعاء API البايثون المبرمج في Vercel
+                const response = await fetch(`/api/search?query=${query}`);
+                const data = await response.json();
+                
+                loader.style.display = "none";
+
+                if (data.results.length === 0) {
+                    resultsDiv.innerHTML = "<p style='color:red; text-align:center;'>لم يتم العثور على مذكرات مطابقة للرقم المدخل.</p>";
+                    return;
+                }
+
+                data.results.forEach(item => {
+                    resultsDiv.innerHTML += `
+                        <div class="result-card">
+                            <h3>رقم المذكرة: ${item.memo_number}</h3>
+                            <p><strong>تاريخ التحديث:</strong> ${item.date || '---'}</p>
+                            <p><strong>ملاحظات:</strong> ${item.notes || '---'}</p>
+                            ${item.link ? `<a href="${item.link}" target="_blank" class="memo-link">عرض المرفقات / الرابط</a>` : ''}
+                        </div>
+                    `;
+                });
+            } catch (error) {
+                loader.style.display = "none";
+                resultsDiv.innerHTML = "<p style='color:red; text-align:center;'>حدث خطأ في الاتصال بالخادم.</p>";
+            }
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                searchMemo();
+            }
+        }
+    </script>
+</body>
+</html>
