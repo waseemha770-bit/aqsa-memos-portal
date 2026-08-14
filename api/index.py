@@ -6,7 +6,8 @@ import codecs
 
 app = FastAPI()
 
-SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1LWymAvzOBfwblAiWIWOsKpj0KTMx8MjaIBZTet12u5g/export?format=csv&gid=0"
+# الرابط الجديد لملف Google Sheets بصيغة CSV
+SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1uuWTYznUJ8mthH5nQggig4vA5l8EDhwq4aDrgTNaXyA/export?format=csv&gid=0"
 
 @app.get("/api/search")
 def search_memo(query: str = ""):
@@ -14,26 +15,26 @@ def search_memo(query: str = ""):
         return JSONResponse(content={"results": []})
     
     try:
-        # استخدام مكتبة requests مع رأس (Header) يحاكي المتصفح الحقيقي
+        # استخدام مكتبة requests مع User-Agent يحاكي متصفحاً حقيقياً لمنع حظر الطلب من خوادم جوجل
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
         }
         
         response = requests.get(SHEET_CSV_URL, headers=headers)
         
-        # التأكد من نجاح الاستجابة
+        # التحقق من نجاح جلب البيانات
         response.raise_for_status()
         
-        # قراءة البيانات
-        # نستخدم iter_lines لقراءة المحتوى سطراً بسطر وتحويله عبر csv.DictReader
+        # قراءة البيانات كملف CSV سطراً بسطر
         lines = (line.decode('utf-8') for line in response.iter_lines())
         reader = csv.DictReader(lines)
         
         results = []
         for row in reader:
-            # تنظيف المسافات إن وجدت حول اسم العمود
+            # استخدام .strip() لإزالة أي مسافات زائدة قد تكون موجودة في الإكسل بالخطأ
             memo_num = str(row.get('رقم المذكرة', '')).strip()
             
+            # البحث إذا كان الرقم المدخل موجوداً ضمن رقم المذكرة
             if query in memo_num:
                 results.append({
                     "memo_number": memo_num,
