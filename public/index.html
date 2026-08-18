@@ -23,9 +23,7 @@
             --text-main: #2d3748;
         }
         
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
             font-family: 'Cairo', sans-serif;
@@ -47,21 +45,8 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
 
-        header h2 {
-            margin: 0 0 5px 0;
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #e2e8f0;
-            letter-spacing: 1px;
-        }
-
-        header h1 {
-            margin: 0;
-            font-size: 2rem;
-            font-weight: 800;
-            color: var(--gold-accent);
-            text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
-        }
+        header h2 { margin: 0 0 5px 0; font-size: 1.2rem; font-weight: 600; color: #e2e8f0; letter-spacing: 1px; }
+        header h1 { margin: 0; font-size: 2rem; font-weight: 800; color: var(--gold-accent); text-shadow: 1px 1px 4px rgba(0,0,0,0.5); }
 
         .main-content {
             flex: 1;
@@ -83,45 +68,11 @@
             text-align: center;
         }
         
-        .search-box {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
-        input[type="text"] {
-            width: 100%;
-            padding: 15px;
-            font-size: 1.1rem;
-            border: 2px solid #cbd5e1;
-            border-radius: 8px;
-            outline: none;
-            font-family: 'Cairo', sans-serif;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-
-        input[type="text"]:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(26, 54, 93, 0.12);
-        }
-
-        .btn-search {
-            padding: 15px 25px;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            font-family: 'Cairo', sans-serif;
-            transition: background-color 0.2s;
-        }
-
-        .btn-search:hover {
-            background-color: #122642;
-        }
+        .search-box { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+        input[type="text"] { width: 100%; padding: 15px; font-size: 1.1rem; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; font-family: 'Cairo', sans-serif; transition: border-color 0.2s, box-shadow 0.2s; }
+        input[type="text"]:focus { border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(26, 54, 93, 0.12); }
+        .btn-search { padding: 15px 25px; background-color: var(--primary-color); color: white; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 700; cursor: pointer; font-family: 'Cairo', sans-serif; transition: background-color 0.2s; }
+        .btn-search:hover { background-color: #122642; }
 
         /* زر تثبيت التطبيق */
         #installBtn {
@@ -139,23 +90,10 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             transition: background-color 0.2s, transform 0.1s;
         }
+        #installBtn:hover { background-color: #b38b47; }
+        #installBtn:active { transform: scale(0.98); }
 
-        #installBtn:hover {
-            background-color: #b38b47;
-        }
-
-        #installBtn:active {
-            transform: scale(0.98);
-        }
-
-        .loader {
-            display: none;
-            text-align: center;
-            margin: 20px 0;
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--primary-color);
-        }
+        .loader { display: none; text-align: center; margin: 20px 0; font-size: 1.1rem; font-weight: 700; color: var(--primary-color); }
 
         .result-card {
             text-align: right;
@@ -166,85 +104,19 @@
             border-radius: 8px;
             border: 1px solid #e2e8f0;
         }
+        .result-card h3 { margin-top: 0; color: var(--primary-color); font-size: 1.3rem; margin-bottom: 12px; }
+        .result-card p { margin: 8px 0; font-size: 1.05rem; line-height: 1.6; }
+        .memo-link { display: inline-block; margin-top: 10px; padding: 10px 20px; background: var(--primary-color); color: white; text-decoration: none; border-radius: 6px; font-weight: 600; }
 
-        .result-card h3 {
-            margin-top: 0;
-            color: var(--primary-color);
-            font-size: 1.3rem;
-            margin-bottom: 12px;
-        }
+        /* زر واتساب */
+        .support-btn { position: fixed; bottom: 25px; right: 25px; background-color: #25D366; color: white; width: 55px; height: 55px; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.25); text-decoration: none; z-index: 1000; transition: transform 0.2s; }
+        .support-btn:hover { transform: scale(1.08); }
+        .support-btn svg { width: 30px; height: 30px; fill: currentColor; }
 
-        .result-card p {
-            margin: 8px 0;
-            font-size: 1.05rem;
-            line-height: 1.6;
-        }
+        footer { background-color: #1a202c; color: #a0aec0; text-align: center; padding: 15px 10px; font-size: 0.95rem; border-top: 3px solid var(--gold-accent); }
+        footer span { color: var(--gold-accent); font-weight: 700; }
 
-        .memo-link {
-            display: inline-block;
-            margin-top: 10px;
-            padding: 10px 20px;
-            background: var(--primary-color);
-            color: white;
-            text-decoration: none;
-            border-radius: 6px;
-            font-weight: 600;
-        }
-
-        /* زر واتساب العائم */
-        .support-btn {
-            position: fixed;
-            bottom: 25px;
-            right: 25px;
-            background-color: #25D366;
-            color: white;
-            width: 55px;
-            height: 55px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-            text-decoration: none;
-            z-index: 1000;
-            transition: transform 0.2s;
-        }
-
-        .support-btn:hover {
-            transform: scale(1.08);
-        }
-
-        .support-btn svg {
-            width: 30px;
-            height: 30px;
-            fill: currentColor;
-        }
-
-        footer {
-            background-color: #1a202c;
-            color: #a0aec0;
-            text-align: center;
-            padding: 15px 10px;
-            font-size: 0.95rem;
-            border-top: 3px solid var(--gold-accent);
-        }
-
-        footer span {
-            color: var(--gold-accent);
-            font-weight: 700;
-        }
-
-        @media (min-width: 601px) {
-            .search-box {
-                flex-direction: row;
-            }
-            input[type="text"] {
-                flex: 1;
-            }
-            .btn-search {
-                width: 150px;
-            }
-        }
+        @media (min-width: 601px) { .search-box { flex-direction: row; } input[type="text"] { flex: 1; } .btn-search { width: 150px; } }
     </style>
 </head>
 <body>
@@ -273,7 +145,7 @@
         برمجة المهندس / <span>وسيم همدان الأهنومي (771954200)</span>
     </footer>
 
-    <!-- زر الدعم عبر واتساب -->
+    <!-- زر خدمة العملاء واتساب -->
     <a href="https://wa.me/967771811337?text=مرحباً،%20لدي%20استفسار%20بخصوص%20بوابة%20المذكرات" target="_blank" class="support-btn" title="خدمة العملاء">
         <svg viewBox="0 0 24 24">
             <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824zm-3.423-14.416c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm.029 18.88c-1.161 0-2.305-.292-3.318-.844l-3.677.964 1.003-3.588c-.608-1.065-.928-2.294-.928-3.568 0-4.145 3.373-7.518 7.518-7.518 4.147 0 7.52 3.373 7.52 7.518 0 4.146-3.373 7.518-7.518 7.518z"/>
@@ -281,7 +153,6 @@
     </a>
 
     <script>
-        // دالة البحث والاستعلام
         async function searchMemo() {
             const query = document.getElementById('searchInput').value.trim();
             const resultsDiv = document.getElementById('results');
@@ -317,7 +188,7 @@
                             <h3>رقم المذكرة: ${item.memo_number}</h3>
                             <p><strong>تاريخ إستلام المذكرة:</strong> ${item.received_date || '---'}</p>
                             ${statusHtml}
-                            <p><strong>تاريخ التحديث:</strong> ${item.date || '---'}</p>
+                            <p><strong>تاريخ التوجيه:</strong> ${item.date || '---'}</p>
                             <p><strong>ملاحظات:</strong> ${item.notes || '---'}</p>
                         </div>`;
                 });
@@ -333,15 +204,13 @@
             }
         }
 
-        // كود تشغيل وتثبيت التطبيق (PWA)
+        // إعدادات PWA وتثبيت التطبيق
         let deferredPrompt;
         const installBtn = document.getElementById('installBtn');
 
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js').catch(err => {
-                    console.log('ServiceWorker registration failed: ', err);
-                });
+                navigator.serviceWorker.register('/sw.js').catch(console.error);
             });
         }
 
